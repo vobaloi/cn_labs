@@ -9,6 +9,8 @@ from mininet.cli import CLI
 from mininet.log import setLogLevel, info
 from mininet.link import TCLink, Intf
 from subprocess import call
+import time
+import os
 
 def myNetwork():
 
@@ -52,33 +54,43 @@ def myNetwork():
 
     info( '*** Post configure switches and hosts\n')
     r3.cmd('ifconfig r3-eth0 172.30.0.1 netmask 255.255.0.0 up')
-    r3.cmd('ifconfig r3-eth1 10.10.0.1 netmask 255.0.0.0 up')
+    r3.cmd('ifconfig r3-eth1 10.0.0.1 netmask 255.0.0.0 up')
    
     r4.cmd('ifconfig r4-eth0 192.168.0.1 netmask 255.255.255.0 up')
-    r4.cmd('ifconfig r4-eth1 10.10.0.2 netmask 255.0.0.0 up')
+    r4.cmd('ifconfig r4-eth1 10.0.0.2 netmask 255.0.0.0 up')
     
-    h1.cmd('route add default gw 172.30.0.1')
+    h1.cmd('route add default gw 172.30.0.1') 
     h2.cmd('route add default gw 172.30.0.1')
     h3.cmd('route add default gw 192.168.0.1')
     h4.cmd('route add default gw 192.168.0.1')
     
-    r3.cmd('zebra -f /etc/quagga/r3zebra.conf -d -i /etc/quagga/r3zebra')
-    r3.cmd('ripd -f /etc/quagga/r3ripd.conf -d -i /etc/quagga/r3ripd')
+    #ZERBA
+    r3.cmd('zebra -f /etc/quagga/r3zebra.conf -d -z /tmp/r3zebra.api -i /tmp/r3zebra.interface')
+    #time.sleep(1)
+    r4.cmd('zebra -f /etc/quagga/r4zebra.conf -d -z /tmp/r4zebra.api -i /tmp/r4zebra.interface')
     
-    r4.cmd('zebra -f /etc/quagga/r4zebra.conf -d -i /etc/quagga/r4zebra')
-    r3.cmd('ripd -f /etc/quagga/r4ripd.conf -d -i /etc/quagga/r4ripd')
+    #OSPF
+    r3.cmd('ospfd -f /etc/quagga/r3_ospfd.conf -d -z /tmp/r3zebra.api -i /tmp/r3ospfd.interface')
+    r4.cmd('ospfd -f /etc/quagga/r4_ospfd.conf -d -z /tmp/r4zebra.api -i /tmp/r4ospfd.interface')
+    
+    #RIP
+    #r3.cmd('ripd -f /etc/quagga/r3_ripd.conf -d -z /tmp/r3zebra.api -i /tmp/r3ripd.interface')
+    #r4.cmd('ripd -f /etc/quagga/r4_ripd.conf -d -z /tmp/r4zebra.api -i /tmp/r4ripd.interface')
 
-
+   
     #r3.cmd('route add -net 172.30.0.0/16 gw 172.30.0.1')
     #r3.cmd('route add -net 192.168.0.0/24 gw 10.10.0.2')
-    #r3.cmd('route add -net 10.0.0.0/8 gw 10.10.0.1')
+    #r3.cmd('route add -net 10.10.0.0/8 gw 10.10.0.1')
 	
     #r4.cmd('route add -net 192.168.0.0/24 gw 192.168.0.1')
     #r4.cmd('route add -net 172.30.0.0/16 gw 10.10.0.1')
-    #r4.cmd('route add -net 10.0.0.0/8 gw 10.10.0.2')
+    #r4.cmd('route add -net 10.10.0.0/8 gw 10.10.0.2')
     
     CLI(net)
     net.stop()
+    os.system('killall -9 ripd ospfd zebra')
+    os.system('rm -f *api*')
+    os.system('rm -f *interface*')
 
 if __name__ == '__main__':
     setLogLevel( 'info' )
