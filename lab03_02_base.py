@@ -65,26 +65,26 @@ def myNetwork():
     h4.cmd('route add default gw 192.168.0.1')
     
     #ZERBA
-    r3.cmd('zebra -f /etc/quagga/r3zebra.conf -d -z /tmp/r3zebra.api -i /tmp/r3zebra.interface')
+    #r3.cmd('zebra -f /etc/quagga/r3zebra.conf -d -z /tmp/r3zebra.api -i /tmp/r3zebra.interface')
     #time.sleep(1)
-    r4.cmd('zebra -f /etc/quagga/r4zebra.conf -d -z /tmp/r4zebra.api -i /tmp/r4zebra.interface')
+    #r4.cmd('zebra -f /etc/quagga/r4zebra.conf -d -z /tmp/r4zebra.api -i /tmp/r4zebra.interface')
     
     #OSPF
-    r3.cmd('ospfd -f /etc/quagga/r3_ospfd.conf -d -z /tmp/r3zebra.api -i /tmp/r3ospfd.interface')
-    r4.cmd('ospfd -f /etc/quagga/r4_ospfd.conf -d -z /tmp/r4zebra.api -i /tmp/r4ospfd.interface')
+    #r3.cmd('ospfd -f /etc/quagga/r3_ospfd.conf -d -z /tmp/r3zebra.api -i /tmp/r3ospfd.interface')
+    #r4.cmd('ospfd -f /etc/quagga/r4_ospfd.conf -d -z /tmp/r4zebra.api -i /tmp/r4ospfd.interface')
     
     #RIP
     #r3.cmd('ripd -f /etc/quagga/r3_ripd.conf -d -z /tmp/r3zebra.api -i /tmp/r3ripd.interface')
     #r4.cmd('ripd -f /etc/quagga/r4_ripd.conf -d -z /tmp/r4zebra.api -i /tmp/r4ripd.interface')
 
    
-    #r3.cmd('route add -net 172.30.0.0/16 gw 172.30.0.1')
-    #r3.cmd('route add -net 192.168.0.0/24 gw 10.10.0.2')
-    #r3.cmd('route add -net 10.10.0.0/8 gw 10.10.0.1')
+    r3.cmd('route add -net 172.30.0.0/16 gw 172.30.0.1')
+    r3.cmd('route add -net 192.168.0.0/24 gw 10.0.0.2')
+    #r3.cmd('route add -net 10.0.0.0/8 gw 10.10.0.1')
 	
-    #r4.cmd('route add -net 192.168.0.0/24 gw 192.168.0.1')
-    #r4.cmd('route add -net 172.30.0.0/16 gw 10.10.0.1')
-    #r4.cmd('route add -net 10.10.0.0/8 gw 10.10.0.2')
+    r4.cmd('route add -net 192.168.0.0/24 gw 192.168.0.1')
+    r4.cmd('route add -net 172.30.0.0/16 gw 10.0.0.1')
+    #r4.cmd('route add -net 10.0.0.0/8 gw 10.10.0.2')
     
     CLI(net)
     net.stop()
